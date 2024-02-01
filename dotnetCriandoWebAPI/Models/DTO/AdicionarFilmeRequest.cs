@@ -2,11 +2,7 @@
 
 namespace dotnetCriandoWebAPI.Models.DTO;
 
-public class FilmeRequest
-{
-}
-
-public class FilmeAdicionarFilmeRequest
+public class AdicionarFilmeRequest
 {
     [Required(ErrorMessage = "Campo titulo é obrigatorio.")]
     public required string Titulo { get; set; }
