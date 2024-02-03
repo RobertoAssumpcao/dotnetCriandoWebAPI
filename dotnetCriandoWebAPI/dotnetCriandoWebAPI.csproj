@@ -20,8 +20,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="Controllers\TesteController.cs"/>
-        <Compile Remove="Controllers\a.cs"/>
         <Compile Remove="Models\DTO\FilmeRequest.cs"/>
     </ItemGroup>
 
