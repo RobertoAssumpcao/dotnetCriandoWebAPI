@@ -49,7 +49,7 @@ public class FilmeController : ControllerBase
             var filmes = _dbContext.Filmes.Skip(skip).Take(take).ToList();
 
             if (filmes == null || filmes.Count == 0)
-                return NotFound("Filmes não encontrado");
+                return NotFound(new { message = "Filmes não encontrados" });
 
             return Ok(_mapper.Map<IEnumerable<GetFilmeResponse>>(filmes));
         }
@@ -68,7 +68,7 @@ public class FilmeController : ControllerBase
             var filme = _dbContext.Filmes.Find(id);
 
             if (filme == null)
-                return NotFound("Filme não encontrado");
+                return NotFound(new { message = "Filme não encontrado" });
 
             return Ok(_mapper.Map<GetFilmeResponse>(filme));
         }
@@ -87,7 +87,7 @@ public class FilmeController : ControllerBase
             var filme = _dbContext.Filmes.Find(id);
 
             if (filme == null)
-                return NotFound("Filme não encontrado");
+                return NotFound(new { message = "Filme não encontrado" });
 
             _logger.LogInformation("Deletando filme.");
             _dbContext.Filmes.Remove(filme);
@@ -110,7 +110,7 @@ public class FilmeController : ControllerBase
             var filme = _dbContext.Filmes.Find(id);
 
             if (filme == null)
-                return NotFound("Filme não encontrado");
+                return NotFound(new { message = "Filme não encontrado" });
 
             _logger.LogInformation("Editando filme");
             filme.Titulo = filmeUpdate.Titulo;
