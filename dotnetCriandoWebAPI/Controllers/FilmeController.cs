@@ -120,7 +120,7 @@ public class FilmeController : ControllerBase
             _dbContext.Entry(filme).State = EntityState.Modified;
             _dbContext.SaveChanges();
 
-            return Ok();
+            return NoContent();
         }
         catch (Exception e)
         {
