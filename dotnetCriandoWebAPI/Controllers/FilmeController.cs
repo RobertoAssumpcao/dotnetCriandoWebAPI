@@ -28,10 +28,11 @@ public class FilmeController : ControllerBase
         try
         {
             _logger.LogInformation("Criando filme.");
-            _dbContext.Filmes.Add(_mapper.Map<Filme>(adicionarFilmeRequest));
+            var filme = _mapper.Map<Filme>(adicionarFilmeRequest);
+            _dbContext.Filmes.Add(filme);
             _dbContext.SaveChanges();
 
-            return StatusCode(StatusCodes.Status201Created);
+            return CreatedAtAction(nameof(GetFilme), new { id = filme.Id }, filme);
         }
         catch (Exception e)
         {
