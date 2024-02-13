@@ -9,33 +9,24 @@ namespace dotnetCriandoWebAPI.Controllers;
 
 [ApiController]
 [Route("[controller]/[action]")]
-public class FilmeController : ControllerBase
+public class FilmeController(ILogger<FilmeController> logger, DataContext dbContext, IMapper mapper)
+    : ControllerBase
 {
-    private readonly DataContext _dbContext;
-    private readonly ILogger _logger;
-    private readonly IMapper _mapper;
-
-    public FilmeController(ILogger<FilmeController> logger, DataContext dbContext, IMapper mapper)
-    {
-        _logger = logger;
-        _dbContext = dbContext;
-        _mapper = mapper;
-    }
-
     [HttpPost]
     public IActionResult AdicionarFilme([FromBody] AdicionarFilmeRequest adicionarFilmeRequest)
     {
         try
         {
-            _logger.LogInformation("Criando filme.");
-            var filme = _mapper.Map<Filme>(adicionarFilmeRequest);
-            _dbContext.Filmes.Add(filme);
-            _dbContext.SaveChanges();
+            logger.LogInformation("Criando filme.");
+            var filme = mapper.Map<Filme>(adicionarFilmeRequest);
+            dbContext.Filme.Add(filme);
+            dbContext.SaveChanges();
 
             return CreatedAtAction(nameof(GetFilme), new { id = filme.Id }, filme);
         }
         catch (Exception e)
         {
+            logger.LogError("Erro " + e.Message + " ao adicionar um filme.");
             return StatusCode(StatusCodes.Status500InternalServerError, new { error = e.Message });
         }
     }
@@ -45,13 +36,13 @@ public class FilmeController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("Verificando se exite filme");
-            var filmes = _dbContext.Filmes.Skip(skip).Take(take).ToList();
+            logger.LogInformation("Verificando se existe filme");
+            var filmes = dbContext.Filme.Skip(skip).Take(take).ToList();
 
-            if (filmes == null || filmes.Count == 0)
+            if (filmes.Count == 0)
                 return NotFound(new { message = "Filmes não encontrados" });
 
-            return Ok(_mapper.Map<IEnumerable<GetFilmeResponse>>(filmes));
+            return Ok(mapper.Map<IEnumerable<GetFilmeResponse>>(filmes));
         }
         catch (Exception e)
         {
@@ -64,13 +55,13 @@ public class FilmeController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("Verificando se exite filme");
-            var filme = _dbContext.Filmes.Find(id);
+            logger.LogInformation("Verificando se exite filme");
+            var filme = dbContext.Filme.Find(id);
 
             if (filme == null)
                 return NotFound(new { message = "Filme não encontrado" });
 
-            return Ok(_mapper.Map<GetFilmeResponse>(filme));
+            return Ok(mapper.Map<GetFilmeResponse>(filme));
         }
         catch (Exception e)
         {
@@ -83,15 +74,15 @@ public class FilmeController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("buscando filme filme");
-            var filme = _dbContext.Filmes.Find(id);
+            logger.LogInformation("buscando filme filme");
+            var filme = dbContext.Filme.Find(id);
 
             if (filme == null)
                 return NotFound(new { message = "Filme não encontrado" });
 
-            _logger.LogInformation("Deletando filme.");
-            _dbContext.Filmes.Remove(filme);
-            _dbContext.SaveChanges();
+            logger.LogInformation("Deletando filme.");
+            dbContext.Filme.Remove(filme);
+            dbContext.SaveChanges();
 
             return NoContent();
         }
@@ -106,19 +97,19 @@ public class FilmeController : ControllerBase
     {
         try
         {
-            _logger.LogInformation("Buscando filme filme");
-            var filme = _dbContext.Filmes.Find(id);
+            logger.LogInformation("Buscando filme filme");
+            var filme = dbContext.Filme.Find(id);
 
             if (filme == null)
                 return NotFound(new { message = "Filme não encontrado" });
 
-            _logger.LogInformation("Editando filme");
+            logger.LogInformation("Editando filme");
             filme.Titulo = filmeUpdate.Titulo;
             filme.Genero = filmeUpdate.Genero;
             filme.Duracao = filmeUpdate.Duracao;
-            
-            _dbContext.Entry(filme).State = EntityState.Modified;
-            _dbContext.SaveChanges();
+
+            dbContext.Entry(filme).State = EntityState.Modified;
+            dbContext.SaveChanges();
 
             return NoContent();
         }
